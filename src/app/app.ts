@@ -3,10 +3,10 @@
  */
 import {Component} from 'angular2/core';
 import {RouteConfig, Router, ROUTER_DIRECTIVES} from 'angular2/router';
-import {FORM_PROVIDERS} from 'angular2/common';
-
-import {RouterActive} from './directives/router-active';
+import {FORM_PROVIDERS, FORM_DIRECTIVES, Control} from 'angular2/common';
+import {Http} from 'angular2/http';
 import {Home} from './home/home';
+import {Users} from './User/users';
 
 /*
  * App Component
@@ -14,67 +14,63 @@ import {Home} from './home/home';
  */
 @Component({
   selector: 'app',
-  providers: [ ...FORM_PROVIDERS ],
-  directives: [ ...ROUTER_DIRECTIVES, RouterActive ],
+  providers: [FORM_PROVIDERS ],
+  directives: [ROUTER_DIRECTIVES, FORM_DIRECTIVES],
   pipes: [],
   styles: [`
-    nav ul {
-      display: inline;
-      list-style-type: none;
-      margin: 0;
-      padding: 0;
-      width: 60px;
-    }
-    nav li {
-      display: inline;
-    }
-    nav li.active {
-      background-color: lightgray;
-    }
+      #main { margin: 10px 0 }
+      #main button { margin-bottom: 5px }
+      .search * { margin: 10px 0; }
+      .no-users { color: red; }
+      .container { width: 100% }
+      img { max-width: 50px; }
   `],
   template: `
     <header>
-      <nav>
-        <h1>Hello {{ name }}</h1>
-        <ul>
-          <li router-active>
-            <a [routerLink]=" ['Index'] ">Index</a>
-          </li>
-          <li router-active>
-            <a [routerLink]=" ['Home'] ">Home</a>
-          </li>
-          <li router-active>
-            <a [routerLink]=" ['About'] ">About</a>
-          </li>
-        </ul>
-      </nav>
-    </header>
-
-    <main>
-      <router-outlet></router-outlet>
-    </main>
-
-    <footer>
-      WebPack Angular 2 Starter by <a [href]="url">@AngularClass</a>
-      <div>
-        <img [src]="angularclassLogo" width="10%">
+   <div id="sidebar" class="col-sm-3">
+      <div class="search">
+        <input [ngFormControl]="searchTerm" class="form-control" placeholder='Seach for users' />
+        <button class="btn btn-primary" (click)="getUsers()">Get Users</button>
       </div>
-    </footer>
+      <div class="list-group">
+        <p class="no-users" *ngIf="users.total_count == 0">No users found</p>
+        <a
+          class="users list-group-item"
+          *ngFor="#user of users.items"
+          [routerLink]="['Users', { userLogin: user.login}]"
+        >
+
+          <img class="img-circle" src="{{user.avatar_url}}"  />
+          <strong>{{user.login}}</strong>
+        </a>
+      </div>
+    </div>
+    <div id="main" class="col-sm-9">
+      <router-outlet></router-outlet>
+    </div>
   `
 })
-@RouteConfig([
-  { path: '/', component: Home, name: 'Index' },
-  { path: '/home', component: Home, name: 'Home' },
-  // Async load a component using Webpack's require with es6-promise-loader
-  { path: '/about', loader: () => require('./about/about')('About'), name: 'About' },
-  { path: '/**', redirectTo: ['Index'] }
-])
-export class App {
-  angularclassLogo = 'assets/img/angularclass-avatar.png';
-  name = 'Angular 2 Webpack Starter';
-  url = 'https://twitter.com/AngularClass';
-  constructor() {
 
+@RouteConfig([
+  {path: '/home', component: Home, name: 'Home'},
+  { path: '/users/:userLogin/...', component: Users, name : 'Users'},
+  { path: '/**', redirectTo: ['Home']}
+])
+
+export class App {
+  users: Array<Object> = [];
+  searchTerm: Control = new Control();
+
+  // We want an instance of router so we can route manually
+  constructor(public http: Http, private _router: Router) {}
+
+  getUsers() {
+    this.http.get(`https://api.github.com/search/users?q=${this.searchTerm.value}`)
+      .map(response => response.json())
+      .subscribe(
+        data => this.users = data,
+        error => console.log(error)
+      );
   }
 }
 
