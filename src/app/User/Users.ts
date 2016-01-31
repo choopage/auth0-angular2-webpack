@@ -1,14 +1,12 @@
-/**
- * Created by jerchoo on 29/1/16.
- */
 import {Component} from 'angular2/core';
 import {Http} from 'angular2/http';
 import {ROUTER_DIRECTIVES, RouteParams, RouteConfig} from 'angular2/router';
 import {UserDetail} from './UserDetail';
+import {UserFollower} from './UserFollower';
 
 @Component({
   template: `
-  <div class="panel panel-default">
+    <div class="panel panel-default">
       <div class="panel-heading">
         <h1>{{userLogin}}</h1>
       </div>
@@ -19,11 +17,9 @@ import {UserDetail} from './UserDetail';
   `,
   directives: [ROUTER_DIRECTIVES]
 })
-
 @RouteConfig([
-  {path: '/detail', component: UserDetail, name: 'UserDetail', useAsDefault: true}
+  { path: '/detail/...', component: UserDetail, name: 'UserDetail', useAsDefault: true }
 ])
-
 export class Users {
   userLogin: Object;
 
