@@ -26,7 +26,7 @@ import {Users} from './User/users';
       img { max-width: 50px; }
   `],
   template: `
-    <header>
+
    <div id="sidebar" class="col-sm-3">
       <div class="search">
         <input [ngFormControl]="searchTerm" class="form-control" placeholder='Seach for users' />
@@ -72,6 +72,7 @@ export class App {
         error => console.log(error)
       );
   }
+
 }
 
 /*
