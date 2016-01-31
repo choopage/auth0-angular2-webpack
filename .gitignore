@@ -58,3 +58,7 @@ Thumbs.db
 # IDE #
 .idea/
 *.swp
+
+
+*.js
+*.map
