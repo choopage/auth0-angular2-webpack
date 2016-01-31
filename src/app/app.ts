@@ -4,6 +4,7 @@
 import {Component} from 'angular2/core';
 import {RouteConfig, Router, ROUTER_DIRECTIVES} from 'angular2/router';
 import {FORM_PROVIDERS, FORM_DIRECTIVES, Control} from 'angular2/common';
+import {AuthHttp, tokenNotExpired, JwtHelper} from 'angular2-jwt';
 import {Http} from 'angular2/http';
 import {Home} from './home/home';
 import {Users} from './User/users';
@@ -26,6 +27,10 @@ import {Users} from './User/users';
       img { max-width: 50px; }
   `],
   template: `
+    <h1>Welcome to Angular2 with Auth0</h1>
+    <button *ng-if="!loggedIn()" (click)="login()">Login</button>
+    <button *ng-if="loggedIn()" (click)="logout()">Logout</button>
+
 
    <div id="sidebar" class="col-sm-3">
       <div class="search">
@@ -58,6 +63,7 @@ import {Users} from './User/users';
 ])
 
 export class App {
+  lock = new Auth0Lock('xxxxx', 'yyyy');
   users: Array<Object> = [];
   searchTerm: Control = new Control();
 

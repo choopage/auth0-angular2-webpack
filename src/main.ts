@@ -4,7 +4,8 @@
 import {provide, enableProdMode} from 'angular2/core';
 import {bootstrap, ELEMENT_PROBE_PROVIDERS} from 'angular2/platform/browser';
 import {ROUTER_PROVIDERS, LocationStrategy, HashLocationStrategy} from 'angular2/router';
-import {HTTP_PROVIDERS} from 'angular2/http';
+import {HTTP_PROVIDERS, Http} from 'angular2/http';
+import {AuthHttp, AuthConfig} from 'angular2-jwt';
 
 const ENV_PROVIDERS = [];
 
@@ -29,7 +30,13 @@ document.addEventListener('DOMContentLoaded', function main() {
     ...ENV_PROVIDERS,
     ...HTTP_PROVIDERS,
     ...ROUTER_PROVIDERS,
-    provide(LocationStrategy, { useClass: HashLocationStrategy })
+    provide(LocationStrategy, { useClass: HashLocationStrategy }),
+    provide(AuthHttp, {
+      useFactory: (http) => {
+        return new AuthHttp(new AuthConfig(), http);
+      },
+      deps: [Http]
+    })
   ])
   .catch(err => console.error(err));
 

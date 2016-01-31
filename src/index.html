@@ -4,7 +4,7 @@
 
   <title>{%= o.webpackConfig.metadata.title %}</title>
 
-  <!-- Auth0 Lock script -->
+  <!-- Auth0 Lock script and AngularJS module -->
   <script src="//cdn.auth0.com/js/lock-8.1.min.js"></script>
 
   <!-- Setting the right viewport -->
@@ -39,6 +39,9 @@
   {% for (var css in o.htmlWebpackPlugin.files.css) { %}
   <link href="{%= o.htmlWebpackPlugin.files.css[css] %}" rel="stylesheet">
   {% } %}
+
+
+
 
 </head>
 
